@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
+    protected $with=['author', 'category'];
 
 //    everthing can be mass assigned except id
     protected $guarded=['id'];
@@ -16,8 +17,8 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function author(){
+        return $this->belongsTo(User::class,'user_id' );
     }
 
 
