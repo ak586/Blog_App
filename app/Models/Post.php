@@ -2,49 +2,30 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\File;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Post
+class Post extends Model
 {
+    use HasFactory;
 
-    public $title;
-    public $excerpt;
-    public $date;
-    public $body;
-    public $slug;
+//    everthing can be mass assigned except id
+    protected $guarded=['id'];
 
-    public function __construct($title, $excerpt, $date, $body, $slug){
-        $this->title=$title;
-        $this->date=$date;
-        $this->excerpt=$excerpt;
-        $this->body=$body;
-        $this->slug=$slug;
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 
 
-    public static function find($slug)
-    {
-        $posts= static::all();
-        return  $posts->firstWhere('slug',$slug );
-    }
-
-    public static function all()
-    {
-        return cache()->rememberForever('posts.all', function(){
-            return collect(File::files(resource_path("/posts/")))
-                ->map(function($file){
-                    $blog_data=YamlFrontMatter::parseFile($file);
-                    return new Post(
-                        $blog_data->title,
-                        $blog_data->excerpt,
-                        $blog_data->date,
-                        $blog_data->body(),
-                        $blog_data->slug
-                    );
-                })->sortByDesc('date');
-        });
-
-    }
+//    public function getRouteKeyName()
+//    {
+//        return 'slug';
+//    }
+//    Never perform mass assignement until you are in control of the array
+//    these list items are allowed to be mass assigned
+//    protected $fillable=['title', 'body', 'excerpt'];
 }
