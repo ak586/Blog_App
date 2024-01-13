@@ -1,36 +1,25 @@
 <?php
 
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SessionsController;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use Illuminate\Http\Request;
+
+use \App\Http\Controllers\PostController;
+
+Route::get('/',[PostController::class, 'index'])->name('home');
+Route::get('/posts/{post:slug}', [PostController::class, 'search']);
 
 
+//protecting this route using the guest midddleware
+Route::get('/register',[RegisterController::class, 'create'])->middleware('guest');
+Route::post('/register', [RegisterController::class , 'store'])->middleware('guest');
 
-Route::get('/', function () {
+Route::post('/logout', [SessionsController::class, 'destroy'])->middleware('auth');
 
-   return view('posts', [
-       'posts'=> Post::latest()->with('category', 'author')->get()
-   ]);
-});
+Route::get('/login', [SessionsController::class, 'create'])->middleware('guest');
+Route::post('/login', [SessionsController::class, 'store'])->middleware('guest');
 
-
-
-Route::get('/posts/{post:slug}', function (Post $post){
-    return view('post',
-        ['post'=> $post,
-    ]);
-});
-
-
-Route::get('/categories/{category}',function( Category $category){
-    return view('posts',[
-        'posts'=>$category->posts
-    ]);
-});
-
-Route::get('/authors/{author:username}', function (User $author){
-    return view('posts',[
-        'posts'=>$author->posts
-    ]);
-});
