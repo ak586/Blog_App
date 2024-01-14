@@ -24,6 +24,7 @@ class SessionsController extends Controller
         ]);
 
         if(auth()->attempt($attributes)){
+//            auth()->regenerate();
             return redirect('/')->with('success', 'Welcome back!');
         }
 

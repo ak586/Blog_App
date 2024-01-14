@@ -53,6 +53,38 @@
                     {!! $post->body !!}
                 </div>
             </div>
+
+            <section class="col-span-8 col-start-5 mt-10 ">
+
+
+                @auth
+                    <form method="POST" action="/posts/{{$post->slug}}/comments" class="mt-10 border border-gray-200 p-6 rounded-xl">
+                        @csrf <!-- Add this line to include the CSRF token -->
+                        <header class="flex items-center">
+                            <img src="https://i.pravatar.cc/?u={{auth()->id()}}" alt="user avatar" width="40" height="40" class="rounded-full ">
+                            <h1 class="ml-3">Want to participate?</h1>
+                        </header>
+                        <div class="mt-5">
+                        <textarea name="body" rows="10" cols="30"
+                                  class="w-full text-sm focus:outline-none focus:ring"
+                                  placeholder="Quick, thing of something to say!"
+                                  required
+                        ></textarea>
+                        </div>
+
+                        <div class="mb-6 flex justify-end mt-3 pt-6 border-t border-gray-300">
+                            <button class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500">
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                @endauth
+
+
+               @foreach($post->comments as $comment)
+                   <x-post-comment :comment="$comment" />
+               @endforeach
+            </section>
         </article>
     </main>
 </section>
